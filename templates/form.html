@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Amotekun Recruitment Form</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 11.5px;
+      color: #000;
+      background: #fff;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 12mm 15mm 16mm 15mm;
+      page-break-after: always;
+      position: relative;
+      background: #fff;
+    }
+    .page:last-child { page-break-after: avoid; }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .header-left { display: flex; align-items: center; gap: 8px; }
+    .header-logo { width: 52px; height: 52px; object-fit: contain; }
+    .header-org-name { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
+    .header-right-logo { width: 52px; height: 52px; object-fit: contain; }
+
+    .divider-thick { border-top: 2.5px solid #000; margin: 4px 0; }
+    .divider-thin  { border-top: 1px solid #000;   margin: 4px 0; }
+
+    .free-notice {
+      text-align: center;
+      font-weight: bold;
+      font-size: 11.5px;
+      margin: 3px 0 1px;
+    }
+    .form-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      text-transform: uppercase;
+      margin: 2px 0;
+    }
+    .sub-title {
+      text-align: center;
+      font-size: 10.5px;
+      margin: 1px 0 4px;
+    }
+    .page-subtitle {
+      text-align: center;
+      font-weight: bold;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin: 2px 0 6px;
+      text-decoration: underline;
+    }
+
+    /* META + PHOTO ROW */
+    .meta-photo-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 6px 0;
+    }
+    .meta-left { flex: 1; }
+    .meta-left p { font-size: 11px; margin-bottom: 2px; }
+    .meta-left .form-no-line { font-size: 13px; font-weight: bold; margin: 2px 0; }
+
+    .note-box {
+      border: 1.5px solid #000;
+      padding: 5px 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 11px;
+      margin-top: 6px;
+      background: #f8f8f8;
+    }
+
+    .photo-box {
+      width: 90px;
+      height: 108px;
+      border: 1.5px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      text-align: center;
+      color: #666;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* FIELDS */
+    .section-label {
+      font-weight: bold;
+      font-size: 11.5px;
+      margin: 8px 0 5px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 6px;
+      align-items: flex-start;
+    }
+    .field { flex: 1; }
+    .field.full { flex: 0 0 100%; }
+    .field.half { flex: 0 0 calc(50% - 7px); }
+
+    .f-label {
+      font-weight: bold;
+      font-size: 10px;
+      margin-bottom: 1px;
+    }
+    .f-value {
+      border-bottom: 1px solid #333;
+      min-height: 15px;
+      font-size: 11.5px;
+      padding: 1px 2px 1px;
+      line-height: 1.4;
+    }
+    .f-value.multiline {
+      border: 1px solid #555;
+      min-height: 44px;
+      padding: 3px 4px;
+    }
+    .f-value.nil-val {
+      color: #555;
+      font-style: italic;
+      font-size: 11px;
+    }
+
+    /* DECLARATION */
+    .declaration {
+      margin-top: 10px;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+    .decl-name-blank {
+      border-bottom: 1px solid #000;
+      display: inline-block;
+      min-width: 180px;
+      font-weight: bold;
+      font-size: 11.5px;
+      padding-bottom: 1px;
+    }
+
+    /* SIGN ROW */
+    .sign-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 20px;
+      gap: 20px;
+    }
+    .sign-block { flex: 1; text-align: center; }
+    .sign-line-top {
+      border-top: 1px solid #000;
+      margin-bottom: 3px;
+      margin-top: 38px;
+    }
+    .sign-caption { font-size: 10px; }
+
+    .thumb-box {
+      width: 72px;
+      height: 72px;
+      border: 1px solid #000;
+      margin: 0 auto 3px;
+    }
+
+    /* PAGE FOOTER */
+    .page-footer {
+      position: absolute;
+      bottom: 7mm;
+      left: 15mm;
+      right: 15mm;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #444;
+    }
+
+    /* GUARANTORS */
+    .guarantor-heading {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      text-decoration: underline;
+      margin: 10px 0 6px;
+    }
+    .guarantor-text {
+      font-size: 11px;
+      line-height: 1.75;
+      margin-bottom: 4px;
+    }
+    .fill-blank {
+      border-bottom: 1px solid #000;
+      display: inline-block;
+      min-width: 190px;
+    }
+    .g-separator { border-top: 1.5px solid #000; margin: 18px 0 10px; }
+
+    /* MEDICAL */
+    .med-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+    .med-alpha { font-weight: bold; min-width: 18px; }
+    .med-test-name { min-width: 130px; }
+    .med-blank {
+      border-bottom: 1px solid #000;
+      flex: 1;
+      min-height: 14px;
+      display: inline-block;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- ████████████████████████████████████████████████
+     PAGE 1  —  MAIN APPLICATION FORM (FILLED)
+█████████████████████████████████████████████████ -->
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <!-- Replace src with actual logo path on your server -->
+      <img class="header-logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"
+           onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>OYO STATE LOGO</div>'"/>
+      <div class="header-org-name">OYO STATE</div>
+    </div>
+    <img class="header-right-logo" src="{{AMOTEKUN_LOGO}}" alt="Amotekun"
+         onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>AMOTEKUN</div>'"/>
+  </div>
+
+  <div class="divider-thick"></div>
+  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+  <div class="form-title">AMOTEKUN RECRUITMENT FORM</div>
+  <div class="divider-thin"></div>
+
+  <!-- Meta info + passport photo -->
+  <div class="meta-photo-row">
+    <div class="meta-left">
+      <p>Application Completed ✓</p>
+      <p class="form-no-line">Form No.: <strong>{{FORM_NO}}</strong></p>
+      <p>Date Submitted: {{SUBMITTED_DATE}}</p>
+      <div class="note-box">
+        NOTE: PLEASE PRINT THE SLIP AND BRING FORWARD<br/>
+        DURING THE SCREENING EXERCISES!
+      </div>
+    </div>
+    <div class="photo-box">
+      {{#if PASSPORT_PHOTO}}
+        <img src="{{PASSPORT_PHOTO}}" alt="Passport Photo"/>
+      {{else}}
+        Passport<br/>Photograph<br/>(4 × 4)
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- ── Personal Information ── -->
+  <div class="section-label">Personal Information:</div>
+
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">Name of Applicant:</div>
+      <div class="f-value">{{FULL_NAME}}</div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <div class="f-label">Phone Number:</div>
+      <div class="f-value">{{PHONE_NUMBER}}</div>
+    </div>
+    <div class="field">
+      <div class="f-label">Date of Birth:</div>
+      <div class="f-value">{{DATE_OF_BIRTH}}</div>
+    </div>
+    <div class="field">
+      <div class="f-label">LGA:</div>
+      <div class="f-value">{{LGA}}</div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field half">
+      <div class="f-label">Permanent Home Address:</div>
+      <div class="f-value multiline">{{HOME_ADDRESS}}</div>
+    </div>
+    <div class="field half">
+      <div class="field-row" style="flex-direction:column; gap:8px; margin:0;">
+        <div class="field">
+          <div class="f-label">Gender:</div>
+          <div class="f-value">{{GENDER}}</div>
+        </div>
+        <div class="field">
+          <div class="f-label">Academic Qualification:</div>
+          <div class="f-value">{{QUALIFICATION}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Security / Background ── -->
+  <div class="field-row" style="margin-top:6px;">
+    <div class="field full">
+      <div class="f-label">Do you have any security related experiences?</div>
+      <div class="f-value">{{HAS_SECURITY_EXP}}</div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">Mention the name of the organization you belong to:</div>
+      {{#if ORGANIZATION_NAME}}
+        <div class="f-value">{{ORGANIZATION_NAME}}</div>
+      {{else}}
+        <div class="f-value nil-val">NIL</div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">How long have you been a member?</div>
+      {{#if MEMBERSHIP_DURATION}}
+        <div class="f-value">{{MEMBERSHIP_DURATION}}</div>
+      {{else}}
+        <div class="f-value nil-val">NIL</div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">Do you have any special skill or trade?</div>
+      {{#if SPECIAL_SKILL}}
+        <div class="f-value">{{SPECIAL_SKILL}}</div>
+      {{else}}
+        <div class="f-value nil-val">NIL</div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">Any other relevant information that could help your selection?</div>
+      {{#if OTHER_INFO}}
+        <div class="f-value">{{OTHER_INFO}}</div>
+      {{else}}
+        <div class="f-value nil-val">NIL</div>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- ── Declaration ── -->
+  <div class="declaration">
+    I, <span class="decl-name-blank">{{FULL_NAME}}</span> solemnly swear that the information
+    provided above is true and nothing but the truth. Consequently, I should be held liable in the
+    event that any of the above information is discovered to be false.
+  </div>
+
+  <!-- ── Signature + Thumbprint ── -->
+  <div class="sign-row">
+    <div class="sign-block">
+      <div class="sign-line-top"></div>
+      <div class="sign-caption">Applicant's Signature &amp; Date</div>
+    </div>
+    <div class="sign-block">
+      <div class="thumb-box"></div>
+      <div class="sign-caption">Right Thumbprint</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>1 of 3</span>
+    <span>{{SUBMITTED_DATE}}</span>
+  </div>
+
+</div><!-- /PAGE 1 -->
+
+
+<!-- ████████████████████████████████████████████████
+     PAGE 2  —  GUARANTORS' FORM  (blank template)
+          Only applicant name is pre-filled
+█████████████████████████████████████████████████ -->
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <img class="header-logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"
+           onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>OYO STATE LOGO</div>'"/>
+      <div class="header-org-name">OYO STATE</div>
+    </div>
+    <img class="header-right-logo" src="{{AMOTEKUN_LOGO}}" alt="Amotekun"
+         onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>AMOTEKUN</div>'"/>
+  </div>
+
+  <div class="divider-thick"></div>
+  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+  <div class="form-title">AMOTEKUN RECRUITMENT FORM</div>
+  <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
+  <div class="page-subtitle">GUARANTORS' FORM</div>
+  <div class="divider-thin"></div>
+
+  <!-- Applicant name (pre-filled) -->
+  <div class="field-row" style="margin-top:10px;">
+    <div class="field full">
+      <div class="f-label">Applicant's Name:</div>
+      <div class="f-value">{{FULL_NAME}}</div>
+    </div>
+  </div>
+
+  <!-- ── Guarantor 1: Village Head ── -->
+  <div class="guarantor-heading">VILLAGE HEAD</div>
+  <div class="guarantor-text">
+    I, <span class="fill-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    the village head of the above-named applicant who wishes to be selected as a member of
+    Amotekun Corps. I know him/her personally and I found him/her suitable to be selected for the
+    corps. I can attest to his/her good conduct and character. Therefore, I am recommending the
+    applicant for selection and I should be held liable if the applicant is found wanting in
+    character or other vices.
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-block" style="flex:2; text-align:left;">
+      <div class="sign-line-top" style="margin-top:38px;"></div>
+      <div class="sign-caption">Signature &amp; Date</div>
+    </div>
+    <div class="sign-block">
+      <div class="thumb-box"></div>
+      <div class="sign-caption">Right Thumbprint</div>
+    </div>
+  </div>
+
+  <div class="g-separator"></div>
+
+  <!-- Applicant name repeated -->
+  <div class="field-row">
+    <div class="field full">
+      <div class="f-label">Applicant's Name:</div>
+      <div class="f-value">{{FULL_NAME}}</div>
+    </div>
+  </div>
+
+  <!-- ── Guarantor 2: House of Assembly Member ── -->
+  <div class="guarantor-heading">HONORABLE MEMBER, OYO STATE HOUSE OF ASSEMBLY</div>
+  <div class="guarantor-text">
+    I, Honourable
+    <span class="fill-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    of
+    <span class="fill-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    constituency of the above-named applicant who wishes to be selected as a member of Amotekun
+    Corps. I know him/her personally and I found him/her suitable to be selected for the corps.
+    I can attest to his/her good conduct and character. Therefore, I am recommending the applicant
+    for selection and I should be held liable if the applicant is found wanting in character or
+    other vices.
+  </div>
+
+  <div class="sign-row">
+    <div class="sign-block" style="flex:2; text-align:left;">
+      <div class="sign-line-top" style="margin-top:38px;"></div>
+      <div class="sign-caption">Signature &amp; Date</div>
+    </div>
+    <div class="sign-block">
+      <div class="thumb-box"></div>
+      <div class="sign-caption">Right Thumbprint</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>2 of 3</span>
+    <span>{{SUBMITTED_DATE}}</span>
+  </div>
+
+</div><!-- /PAGE 2 -->
+
+
+<!-- ████████████████████████████████████████████████
+     PAGE 3  —  MEDICAL FORM  (blank template)
+          Only applicant name is pre-filled
+█████████████████████████████████████████████████ -->
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <img class="header-logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"
+           onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>OYO STATE LOGO</div>'"/>
+      <div class="header-org-name">OYO STATE</div>
+    </div>
+    <img class="header-right-logo" src="{{AMOTEKUN_LOGO}}" alt="Amotekun"
+         onerror="this.outerHTML='<div style=\'font-size:9px;font-weight:bold;width:52px;text-align:center\'>AMOTEKUN</div>'"/>
+  </div>
+
+  <div class="divider-thick"></div>
+  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+  <div class="form-title">AMOTEKUN RECRUITMENT FORM</div>
+  <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
+  <div class="page-subtitle">MEDICAL FORM</div>
+  <div class="divider-thin"></div>
+
+  <!-- Applicant name (pre-filled) -->
+  <div class="field-row" style="margin-top:10px;">
+    <div class="field full">
+      <div class="f-label">Applicant's Name:</div>
+      <div class="f-value">{{FULL_NAME}}</div>
+    </div>
+  </div>
+
+  <div style="font-size:11px; line-height:1.7; margin: 8px 0 14px;">
+    The following tests were conducted on the above named applicant by me the under signed
+    laboratory scientists:
+  </div>
+
+  <!-- Medical tests (all blank for doctor to fill) -->
+  <div class="med-row">
+    <span class="med-alpha">A.</span>
+    <span class="med-test-name">Hepatitis</span>
+    <span class="med-blank"></span>
+  </div>
+  <div class="med-row">
+    <span class="med-alpha">B.</span>
+    <span class="med-test-name">Random Blood Sugar</span>
+    <span class="med-blank"></span>
+  </div>
+  <div class="med-row">
+    <span class="med-alpha">C.</span>
+    <span class="med-test-name">PCV</span>
+    <span class="med-blank"></span>
+  </div>
+  <div class="med-row">
+    <span class="med-alpha">D.</span>
+    <span class="med-test-name">Vital Signs</span>
+    <span class="med-blank"></span>
+  </div>
+
+  <!-- Lab scientist signature -->
+  <div class="sign-row" style="margin-top:22px;">
+    <div class="sign-block" style="flex:2; text-align:left;">
+      <div class="sign-line-top"></div>
+      <div class="sign-caption">Signature / Date / Stamp</div>
+    </div>
+  </div>
+
+  <div class="g-separator"></div>
+
+  <!-- Doctor's declaration -->
+  <div style="font-size:11px; line-height:1.9; margin-top:8px;">
+    I, Dr.
+    <span style="border-bottom:1px solid #000; display:inline-block; min-width:210px;">&nbsp;</span>
+    &nbsp;of&nbsp;
+    <span style="border-bottom:1px solid #000; display:inline-block; min-width:170px;">&nbsp;</span>
+    &nbsp;state hospital have examined the above named applicant and found him/her medically fit
+    to be recruited into Amotekun Corps.
+  </div>
+
+  <!-- Doctor's signature -->
+  <div class="sign-row" style="margin-top:22px;">
+    <div class="sign-block" style="flex:2; text-align:left;">
+      <div class="sign-line-top"></div>
+      <div class="sign-caption">Signature / Date / Stamp</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>3 of 3</span>
+    <span>{{SUBMITTED_DATE}}</span>
+  </div>
+
+</div><!-- /PAGE 3 -->
+
+
+</body>
+</html>
