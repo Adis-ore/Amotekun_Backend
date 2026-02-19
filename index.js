@@ -7,9 +7,22 @@ const path = require("path");
 
 const app = express();
 
-// Middleware
+// CORS — accepts any origin in FRONTEND_URL (comma-separated) plus hardcoded fallbacks
+const allowedOrigins = [
+  ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : []),
+  'https://amotekun-frontend.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+].map(o => o.trim()).filter(Boolean)
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://amotekun-frontend.vercel.app",
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`))
+    }
+  },
   credentials: true,
 }));
 
