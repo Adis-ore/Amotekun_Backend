@@ -38,6 +38,8 @@ const apiLimiter = rateLimit({
   message: "Too many requests from this IP, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
+  // Disable the X-Forwarded-For validation — trust proxy (above) handles this correctly
+  validate: { xForwardedForHeader: false },
 });
 
 // Body parser with 10mb limit for base64 photos
@@ -59,8 +61,14 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Error handler
+// Error handler — always re-apply CORS headers so browser can read the error response
 app.use((err, req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Vary", "Origin");
+  }
   console.error(err);
   res.status(500).json({
     error: "Internal server error",
