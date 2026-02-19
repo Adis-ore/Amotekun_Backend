@@ -7,6 +7,9 @@ const path = require("path");
 
 const app = express();
 
+// Trust Render's load-balancer proxy so X-Forwarded-For is read correctly
+app.set("trust proxy", 1);
+
 // CORS — accepts any origin in FRONTEND_URL (comma-separated) plus hardcoded fallbacks
 const allowedOrigins = [
   ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : []),

@@ -101,7 +101,9 @@ async function generatePDF(data) {
     });
 
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    // domcontentloaded is sufficient — HTML is self-contained (no external network calls)
+    // networkidle0 times out on Render because broken file:// image paths stall the wait
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
 
     // Generate PDF
     const pdfBuffer = await page.pdf({
