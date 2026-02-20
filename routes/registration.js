@@ -27,7 +27,6 @@ router.post("/", portalGuard, async (req, res) => {
       "lga",
       "homeAddress",
       "gender",
-      "qualification",
       "hasSecurityExp",
     ];
 
