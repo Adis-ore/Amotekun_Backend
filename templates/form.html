@@ -11,13 +11,14 @@
       font-size: 11.5px;
       color: #000;
       background: #fff;
-      /* gap: 20px; */
     }
 
+    /* A4 page */
     .page {
       width: 210mm;
       min-height: 297mm;
-      padding: 10mm 14mm 18mm 14mm;
+      /* Spread content: give more room top/bottom */
+      padding: 14mm 14mm 20mm 14mm; /* was 10mm top */
       page-break-after: always;
       position: relative;
       background: #fff;
@@ -29,38 +30,35 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 3px;
+      margin-bottom: 10px; /* more space */
     }
-    .header-left { display: flex; align-items: center; gap: 8px; }
-    .logo { width: 52px; height: 52px; object-fit: contain; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 54px; height: 54px; object-fit: contain; }
     .org-name { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
-    .logo-right { width: 52px; height: 52px; object-fit: contain; }
-
-    /* REMOVE ALL DECORATIVE LINES */
-    .line-thick, .line-thin, .line-section { border-top: none; margin: 0; }
+    .logo-right { width: 54px; height: 54px; object-fit: contain; }
 
     .free-notice {
       text-align: center;
       font-weight: bold;
       font-size: 12px;
-      margin: 6px 0 2px;
+      margin: 10px 0 6px; /* more space */
     }
     .form-title {
       text-align: center;
       font-weight: bold;
       font-size: 14px;
-      margin: 2px 0;
+      margin: 4px 0 10px; /* more space */
     }
     .sub-title {
       text-align: center;
       font-size: 10.5px;
-      margin: 1px 0;
+      margin: 4px 0 8px; /* more space */
     }
     .page-form-type {
       text-align: center;
       font-weight: bold;
       font-size: 13px;
-      margin: 2px 0 3px;
+      margin: 6px 0 12px; /* more space */
       text-transform: uppercase;
     }
 
@@ -69,25 +67,57 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin: 10px 0 8px;
-      gap: 10px;
+      margin: 12px 0 14px; /* more space */
+      gap: 14px;
     }
     .meta-left { flex: 1; }
-    .meta-left p { font-size: 11px; margin-bottom: 2px; }
-    .form-no-text { font-size: 13px; font-weight: bold; margin: 2px 0; }
-    .green-tick { color: #1a7a1a; font-weight: bold; }
+    .meta-left p { font-size: 11px; margin-bottom: 6px; } /* more space */
+    .form-no-text { font-size: 13px; font-weight: bold; margin: 4px 0; }
+
+    /* Highlighted "Application Completed" */
+    .completed-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid #111;
+      border-radius: 999px;
+      font-weight: bold;
+      background: #f2f2f2;
+      margin-bottom: 8px;
+    }
+
+    /* Tick in a circle (no external icon needed) */
+    .tick-circle {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #111;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 18px;
+    }
+    .tick-circle::before {
+      content: "✓";
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 900;
+      transform: translateY(-0.5px);
+    }
+
     .note-text {
       font-weight: bold;
       font-size: 11.5px;
-      margin-top: 8px;
-      line-height: 1.5;
+      margin-top: 10px; /* more space */
+      line-height: 1.6;
       text-align: center;
     }
 
     /* Photo box */
     .photo-box {
-      width: 88px;
-      height: 108px;
+      width: 92px;
+      height: 112px;
       border: 1px solid #999;
       display: flex;
       align-items: center;
@@ -104,65 +134,67 @@
     .section-label {
       font-size: 11.5px;
       font-weight: normal;
-      margin: 10px 0 6px;
+      margin: 14px 0 10px; /* more space */
     }
 
-    /* REMOVE ALL FIELD UNDERLINES */
+    /* Content spacing: spread out (no borders/underlines added) */
     .field-row,
     .row-3col,
     .row-2col {
       border-bottom: none;
-      padding: 4px 0 3px;
-      line-height: 1.55;
+      padding: 6px 0 8px; /* was tighter */
+      line-height: 1.7;   /* more airy */
     }
 
     .field-row {
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
-      gap: 3px;
+      gap: 6px; /* more space */
     }
 
     .fi-label { font-size: 11px; font-weight: normal; white-space: nowrap; }
     .fi-value { font-size: 11.5px; font-weight: bold; }
     .fi-value.nil { font-weight: normal; font-style: italic; color: #555; }
 
-    /* 3-COLUMN ROW (Phone | DOB | LGA) */
-    .row-3col {
-      display: flex;
-    }
+    /* 3-COLUMN ROW */
+    .row-3col { display: flex; gap: 12px; } /* space between cols */
     .col3 {
       flex: 1;
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
-      gap: 3px;
-      padding-right: 10px;
+      gap: 6px;
+      padding-right: 0; /* using gap now */
+      min-width: 0;
     }
-    .col3:last-child { padding-right: 0; }
 
-    /* 2-COLUMN ROW (Address | Gender + Qualification) */
+    /* 2-COLUMN ROW */
     .row-2col {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 16px; /* more space */
     }
-    .col-addr { flex: 0 0 42%; overflow: hidden; min-width: 0; }
+    .col-addr { flex: 0 0 44%; overflow: hidden; min-width: 0; }
     .col-right {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 10px; /* more space */
     }
     .sub-field {
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
-      gap: 3px;
+      gap: 6px;
     }
 
     /* DECLARATION */
-    .declaration { font-size: 11px; line-height: 1.75; margin-top: 14px; }
+    .declaration {
+      font-size: 11px;
+      line-height: 1.85;
+      margin-top: 18px; /* more space */
+    }
 
     /* KEEP ONLY NAME UNDERLINE IN DECLARATION */
     .decl-name {
@@ -176,25 +208,25 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: 22px;
+      margin-top: 26px; /* more space */
       gap: 30px;
     }
-    .sign-block { width: 45%; }
-    .sign-line { border-top: 1px dotted #000; margin-bottom: 3px; margin-top: 20px; }
+    .sign-block { width: 40%; } /* shorter line area */
+    .sign-line { border-top: 1px dotted #000; margin-bottom: 4px; margin-top: 28px; }
     .sign-label { font-size: 10px; text-align: center; }
-    .thumb-block { flex: 0 0 80px; text-align: center; }
+    .thumb-block { flex: 0 0 86px; text-align: center; }
     .thumb-box {
-      width: 75px;
-      height: 75px;
+      width: 78px;
+      height: 78px;
       border: 1px solid #000;
-      margin: 0 auto 3px;
+      margin: 0 auto 4px;
     }
     .thumb-label { font-size: 10px; }
 
-    /* PAGE FOOTER*/
+    /* PAGE FOOTER */
     .page-footer {
       position: absolute;
-      bottom: 7mm;
+      bottom: 8mm;
       left: 14mm;
       right: 14mm;
       display: flex;
@@ -207,18 +239,18 @@
     .g-applicant-row {
       display: flex;
       align-items: baseline;
-      gap: 6px;
-      margin: 10px 0 14px;
+      gap: 10px;
+      margin: 18px 0 16px; /* more space */
     }
     .g-applicant-label { font-size: 11px; white-space: nowrap; }
 
-    /* KEEP applicant name underline */
+    /* Keep applicant name underline but shorter */
     .g-applicant-value {
       font-weight: bold;
       font-size: 11.5px;
       border-bottom: 1px solid #000;
-      width: 45%;
-      min-height: 15px;
+      width: 38%;   /* was 45% */
+      min-height: 16px;
       padding-bottom: 1px;
     }
 
@@ -227,41 +259,41 @@
       font-weight: bold;
       font-size: 12px;
       text-decoration: none;
-      margin: 5px 0 7px;
+      margin: 12px 0 12px; /* more space */
       text-transform: uppercase;
     }
-    .g-body { font-size: 11px; line-height: 1.85; margin-bottom: 4px; }
+    .g-body { font-size: 11px; line-height: 1.95; margin-bottom: 10px; } /* more airy */
 
-    /* KEEP only the I, ______ blanks */
+    /* Keep only the I, ______ blanks */
     .g-blank {
       border-bottom: 1px solid #000;
       display: inline-block;
-      min-width: 180px;
+      min-width: 210px; /* a bit longer like printed forms */
       vertical-align: bottom;
     }
 
-    /* KEEP divider between Village Head and Honourable */
+    /* Divider between Village Head and Honourable (keep as in your file) */
     .divider {
       border-top: 1px solid #000;
-      margin: 18px 0;
+      margin: 22px 0;
     }
 
     /* MEDICAL */
-    .med-intro { font-size: 11px; line-height: 1.6; margin: 6px 0 12px; }
+    .med-intro { font-size: 11px; line-height: 1.8; margin: 14px 0 18px; }
     .med-item {
       display: flex;
       align-items: baseline;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 18px; /* more space to fill A4 */
       font-size: 11px;
     }
     .med-alpha { min-width: 16px; }
-    .med-name  { min-width: 125px; }
+    .med-name  { min-width: 140px; }
 
-    /* REMOVE medical blanks */
+    /* REMOVE medical blanks (as you required) */
     .med-blank { border-bottom: none; flex: 1; min-height: 14px; }
 
-    .doc-section { font-size: 11px; line-height: 1.9; margin-top: 8px; }
+    .doc-section { font-size: 11px; line-height: 2.0; margin-top: 18px; }
 
     /* KEEP doctor name blanks */
     .doc-blank {
@@ -286,7 +318,7 @@
       <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
       <span class="org-name">OYO STATE</span>
     </div>
-    <img class="logo-right" src="{{ÀMỌ̀TẸ́KÙN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
+    <img class="logo-right" src="{{AMOTEKUN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
   </div>
 
   <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
@@ -294,14 +326,20 @@
 
   <div class="meta-photo">
     <div class="meta-left">
-      <p>Application Completed &nbsp;<span class="green-tick">&#10003;</span></p>
+      <div class="completed-pill">
+        <span>Application Completed</span>
+        <span class="tick-circle" aria-hidden="true"></span>
+      </div>
+
       <p class="form-no-text">Form No.: {{FORM_NO}}</p>
-      <p style="font-size:10.5px; margin-top:1px;">Date Submitted: {{SUBMITTED_DATE}}</p>
+      <p style="font-size:10px; margin-top:2px;">Date Submitted: {{SUBMITTED_DATE}}</p>
+
       <p class="note-text">
         NOTE: PLEASE PRINT THE SLIP AND BRING FORWARD<br/>
         DURING THE SCREENING EXERCISES!
       </p>
     </div>
+
     <div class="photo-box">
       {{#if PASSPORT_PHOTO}}
         <img src="{{PASSPORT_PHOTO}}" alt="Passport Photo"/>
@@ -336,7 +374,9 @@
   <div class="row-2col">
     <div class="col-addr">
       <span class="fi-label">Permanent Home Address:</span>
-      <div class="fi-value" style="line-height:1.6; margin-top:2px; word-break:break-word; overflow-wrap:anywhere;">{{HOME_ADDRESS}}</div>
+      <div class="fi-value" style="line-height:1.75; margin-top:4px; word-break:break-word; overflow-wrap:anywhere;">
+        {{HOME_ADDRESS}}
+      </div>
     </div>
     <div class="col-right">
       <div class="sub-field">
@@ -515,7 +555,7 @@
   <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
   <div class="page-form-type">MEDICAL FORM</div>
 
-  <div class="g-applicant-row" style="margin-top:10px;">
+  <div class="g-applicant-row" style="margin-top:16px;">
     <span class="g-applicant-label">Applicant's Name:</span>
     <span class="g-applicant-value">{{FULL_NAME}}</span>
   </div>
@@ -546,7 +586,7 @@
     <span class="med-blank"></span>
   </div>
 
-  <div class="sign-row" style="margin-top:16px;">
+  <div class="sign-row" style="margin-top:22px;">
     <div class="sign-block">
       <div class="sign-line"></div>
       <div class="sign-label">Signature / Date / Stamp</div>
@@ -562,7 +602,7 @@
     fit to be recruited into ÀMỌ̀TẸ́KÙN Corps.
   </div>
 
-  <div class="sign-row" style="margin-top:20px;">
+  <div class="sign-row" style="margin-top:22px;">
     <div class="sign-block">
       <div class="sign-line"></div>
       <div class="sign-label">Signature / Date / Stamp</div>
