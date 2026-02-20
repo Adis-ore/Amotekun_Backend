@@ -5,6 +5,8 @@ const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 
+const { initCluster, closeCluster, getActiveJobs } = require("./services/pdfService");
+
 const app = express();
 
 // Trust Render's load-balancer proxy so X-Forwarded-For is read correctly
@@ -12,22 +14,26 @@ app.set("trust proxy", 1);
 
 // CORS — accepts any origin in FRONTEND_URL (comma-separated) plus hardcoded fallbacks
 const allowedOrigins = [
-  ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : []),
-  'https://amotekun-frontend.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000',
-].map(o => o.trim()).filter(Boolean)
+  ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(",") : []),
+  "https://amotekun-frontend.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+]
+  .map((o) => o.trim())
+  .filter(Boolean);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error(`CORS: origin ${origin} not allowed`))
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(compression());
 
@@ -38,7 +44,7 @@ const apiLimiter = rateLimit({
   message: "Too many requests from this IP, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
-  // Disable the X-Forwarded-For validation — trust proxy (above) handles this correctly
+  // Disable X-Forwarded-For validation — trust proxy (above) handles this correctly
   validate: { xForwardedForHeader: false },
 });
 
@@ -46,7 +52,20 @@ const apiLimiter = rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Apply rate limiting to /api routes
+// Health check — registered BEFORE rate limiter so it is never rate-limited
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    activeJobs: getActiveJobs(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Apply rate limiting to /api routes (after health endpoints above)
 app.use("/api/", apiLimiter);
 
 // Static files for logos
@@ -55,11 +74,6 @@ app.use("/logos", express.static(path.join(__dirname, "logos")));
 // Routes
 const registrationRouter = require("./routes/registration");
 app.use("/api/register", registrationRouter);
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
 
 // Error handler — always re-apply CORS headers so browser can read the error response
 app.use((err, req, res, next) => {
@@ -76,13 +90,33 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Global safety net — never let uncaught errors crash the process
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled Rejection:", err);
 });
 
 // Graceful shutdown
-process.on("SIGTERM", () => {
+async function shutdown() {
+  console.log("Shutting down gracefully…");
+  await closeCluster();
   process.exit(0);
-});
+}
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+
+// Start server only after the browser cluster is ready
+const PORT = process.env.PORT || 5000;
+
+initCluster()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to start browser cluster:", err);
+    process.exit(1);
+  });

@@ -1,127 +1,160 @@
 const puppeteer = require("puppeteer");
+const { Cluster } = require("puppeteer-cluster");
 const fs = require("fs").promises;
 const path = require("path");
 
 const templatePath = path.join(__dirname, "../templates/form.html");
+const logosDir = path.join(__dirname, "../logos");
 
+let cluster;
+let activeJobs = 0;
+
+/* ─── Conditional block renderer ─── */
 function replaceConditionalBlocks(html, data) {
-  // Handle {{#if FIELD}} ... {{else}} ... {{/if}} blocks
-  const ifBlockRegex = /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g;
-  
-  html = html.replace(ifBlockRegex, (match, field, trueBlock, falseBlock) => {
-    const value = data[field];
-    return value && value.toString().trim() ? trueBlock : falseBlock;
+  // {{#if FIELD}} ... {{else}} ... {{/if}}
+  const ifElse = /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g;
+  html = html.replace(ifElse, (_, field, trueBlock, falseBlock) => {
+    const val = data[field];
+    return val && String(val).trim() ? trueBlock : falseBlock;
   });
 
-  // Handle simple {{#if FIELD}} ... {{/if}} blocks (no else)
-  const simpleIfRegex = /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g;
-  
-  html = html.replace(simpleIfRegex, (match, field, block) => {
-    const value = data[field];
-    return value && value.toString().trim() ? block : "";
+  // {{#if FIELD}} ... {{/if}}  (no else)
+  const ifOnly = /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g;
+  html = html.replace(ifOnly, (_, field, block) => {
+    const val = data[field];
+    return val && String(val).trim() ? block : "";
   });
 
   return html;
 }
 
-async function generatePDF(data) {
-  try {
-    // Read the HTML template
-    let html = await fs.readFile(templatePath, "utf-8");
+/* ─── Build the HTML string from the template + data ─── */
+async function buildHTML(data) {
+  let html = await fs.readFile(templatePath, "utf-8");
 
-    // Format dates
-    const submittedDate = new Date(data.submittedDate);
-    const formattedSubmittedDate = submittedDate.toLocaleDateString("en-US", {
+  // Format submitted date
+  const submittedDate = new Date(data.submittedDate);
+  const formattedSubmittedDate =
+    submittedDate.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "2-digit",
-    }) + " " + submittedDate.toLocaleTimeString("en-US", {
+    }) +
+    " " +
+    submittedDate.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
 
-    const birthDate = new Date(data.dateOfBirth);
-    const formattedBirthDate = birthDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    });
+  // Format date of birth
+  const birthDate = new Date(data.dateOfBirth);
+  const formattedBirthDate = birthDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 
-    // Construct logo paths
-    const logosDir = path.join(__dirname, "../logos");
-    const oyoStateLogo = `file:///${path.resolve(logosDir, "oyo-state.png").replace(/\\/g, "/")}`;
-    const amotekun_logo = `file:///${path.resolve(logosDir, "amotekun.png").replace(/\\/g, "/")}`;
+  // Embed logos as base64 data URIs — avoids file:// access issues in Puppeteer sandbox
+  const oyoLogoData = await fs.readFile(path.resolve(logosDir, "OyoLogo.png"));
+  const oyoStateLogo = `data:image/png;base64,${oyoLogoData.toString("base64")}`;
+  const amotekunData = await fs.readFile(path.resolve(logosDir, "amo.jpg"));
+  const amotekunLogo = `data:image/jpeg;base64,${amotekunData.toString("base64")}`;
 
-    // Build replacement data
-    const replacements = {
-      FORM_NO: data.formNo || "",
-      SUBMITTED_DATE: formattedSubmittedDate,
-      FULL_NAME: (data.fullName || "").toUpperCase(),
-      PHONE_NUMBER: data.phoneNumber || "",
-      DATE_OF_BIRTH: formattedBirthDate,
-      LGA: data.lga || "",
-      HOME_ADDRESS: data.homeAddress || "",
-      GENDER: data.gender?.toUpperCase() || "",
-      QUALIFICATION: data.qualification || "",
-      HAS_SECURITY_EXP: data.hasSecurityExp || "",
-      ORGANIZATION_NAME: data.organizationName || "",
-      MEMBERSHIP_DURATION: data.membershipDuration || "",
-      SPECIAL_SKILL: data.specialSkill || "",
-      OTHER_INFO: data.otherInfo || "",
-      PASSPORT_PHOTO: data.passportPhoto || "",
-      OYO_STATE_LOGO: oyoStateLogo,
-      AMOTEKUN_LOGO: amotekun_logo,
-    };
+  const replacements = {
+    FORM_NO: data.formNo || "",
+    SUBMITTED_DATE: formattedSubmittedDate,
+    FULL_NAME: (data.fullName || "").toUpperCase(),
+    PHONE_NUMBER: data.phoneNumber || "",
+    DATE_OF_BIRTH: formattedBirthDate,
+    LGA: data.lga || "",
+    HOME_ADDRESS: data.homeAddress || "",
+    GENDER: data.gender?.toUpperCase() || "",
+    QUALIFICATION: data.qualification || "",
+    HAS_SECURITY_EXP: data.hasSecurityExp || "",
+    ORGANIZATION_NAME: data.organizationName || "",
+    MEMBERSHIP_DURATION: data.membershipDuration || "",
+    SPECIAL_SKILL: data.specialSkill || "",
+    OTHER_INFO: data.otherInfo || "",
+    PASSPORT_PHOTO: data.passportPhoto || "",
+    OYO_STATE_LOGO: oyoStateLogo,
+    AMOTEKUN_LOGO: amotekunLogo,
+  };
 
-    // Replace conditional blocks
-    html = replaceConditionalBlocks(html, replacements);
+  html = replaceConditionalBlocks(html, replacements);
 
-    // Replace all placeholders
-    for (const [key, value] of Object.entries(replacements)) {
-      const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
-      html = html.replace(regex, value);
-    }
+  for (const [key, value] of Object.entries(replacements)) {
+    const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
+    html = html.replace(regex, value);
+  }
 
-    // Launch Puppeteer — extra flags required for Linux containers (Render, Docker)
-    const browser = await puppeteer.launch({
+  return html;
+}
+
+/* ─── Initialize the browser cluster (called once at startup) ─── */
+async function initCluster() {
+  cluster = await Cluster.launch({
+    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    maxConcurrency: 5,
+    puppeteerOptions: {
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",         // critical: prevents crash when /dev/shm is small
-        "--disable-accelerated-2d-canvas",
+        "--disable-dev-shm-usage",
         "--disable-gpu",
-        "--no-first-run",
-        "--no-zygote",
-        "--disable-extensions",
-        "--single-process",                // helps on memory-constrained containers
       ],
+    },
+    timeout: 60000,
+    retryLimit: 2,
+    retryDelay: 1000,
+    monitor: false,
+  });
+
+  cluster.on("taskerror", (err) => {
+    console.error("Cluster task error:", err.message);
+  });
+
+  console.log("Browser cluster ready (maxConcurrency=5)");
+}
+
+/* ─── Generate a PDF — each request runs in its own browser context ─── */
+async function generatePDF(data) {
+  return new Promise((resolve, reject) => {
+    activeJobs++;
+
+    cluster.queue(data, async ({ page, data }) => {
+      try {
+        const html = await buildHTML(data);
+        await page.setContent(html, { waitUntil: "domcontentloaded" });
+        const pdf = await page.pdf({
+          format: "A4",
+          printBackground: true,
+          margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
+        });
+        resolve(pdf);
+      } catch (err) {
+        reject(err);
+      } finally {
+        activeJobs--;
+      }
     });
+  });
+}
 
-    const page = await browser.newPage();
-    // domcontentloaded is sufficient — HTML is self-contained (no external network calls)
-    // networkidle0 times out on Render because broken file:// image paths stall the wait
-    await page.setContent(html, { waitUntil: "domcontentloaded" });
-
-    // Generate PDF
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
-    });
-
-    await browser.close();
-
-    return pdfBuffer;
-  } catch (error) {
-    console.error("PDF generation error:", error);
-    throw error;
+/* ─── Graceful shutdown ─── */
+async function closeCluster() {
+  if (cluster) {
+    await cluster.idle();
+    await cluster.close();
   }
 }
 
-module.exports = {
-  generatePDF,
-};
+/* ─── Active job count for health check ─── */
+function getActiveJobs() {
+  return activeJobs;
+}
 
+module.exports = { initCluster, generatePDF, closeCluster, getActiveJobs };

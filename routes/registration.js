@@ -6,7 +6,18 @@ const { generatePDF } = require("../services/pdfService");
 const { appendRow } = require("../services/sheetsService");
 const { insertRegistration } = require("../services/supabaseService");
 
+// Simple in-process concurrency counter — reject if load is too high
+let activeRequests = 0;
+const MAX_CONCURRENT = 200;
+
 router.post("/", portalGuard, async (req, res) => {
+  if (activeRequests >= MAX_CONCURRENT) {
+    return res.status(503).json({
+      error: "Server is busy, please try again in a moment.",
+    });
+  }
+
+  activeRequests++;
   try {
     // Validate required fields
     const requiredFields = [
@@ -80,6 +91,8 @@ router.post("/", portalGuard, async (req, res) => {
       error: "Registration failed",
       message: error.message,
     });
+  } finally {
+    activeRequests--;
   }
 });
 
