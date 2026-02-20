@@ -24,7 +24,7 @@ async function getNextFormNumber() {
     await fs.writeFile(counterFile, JSON.stringify(counter, null, 2));
     
     const paddedNumber = String(counter.current).padStart(4, "0");
-    return `AMO-${paddedNumber}`;
+    return `AMOE${paddedNumber}`;
   } finally {
     release();
   }
