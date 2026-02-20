@@ -147,7 +147,7 @@
       align-items: flex-start;
       gap: 12px;
     }
-    .col-addr { flex: 0 0 42%; }
+    .col-addr { flex: 0 0 42%; overflow: hidden; min-width: 0; }
     .col-right {
       flex: 1;
       display: flex;
@@ -336,7 +336,7 @@
   <div class="row-2col">
     <div class="col-addr">
       <span class="fi-label">Permanent Home Address:</span>
-      <div class="fi-value" style="line-height:1.6; margin-top:2px;">{{HOME_ADDRESS}}</div>
+      <div class="fi-value" style="line-height:1.6; margin-top:2px; word-break:break-word; overflow-wrap:anywhere;">{{HOME_ADDRESS}}</div>
     </div>
     <div class="col-right">
       <div class="sub-field">
