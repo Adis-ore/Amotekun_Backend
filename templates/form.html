@@ -17,31 +17,48 @@
     .page {
       width: 210mm;
       min-height: 297mm;
-      /* Spread content: give more room top/bottom */
-      padding: 14mm 14mm 20mm 14mm; /* was 10mm top */
+
+      /* a bit more breathing room + still print-safe */
+      padding: 12mm 14mm 14mm 14mm;
+
       page-break-after: always;
       position: relative;
       background: #fff;
+
+      /* IMPORTANT: allow vertical spreading */
+      display: flex;
+      flex-direction: column;
     }
     .page:last-child { page-break-after: avoid; }
+
+    /* ONLY CHANGE: make the first inner wrapper fill the remaining height so Page 1 stretches */
+    .page > div:first-child { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+    /* ONLY CHANGE: auto-spread the three .section blocks on Page 1 */
+    .page > div:first-child > .section { flex: 1; display: flex; flex-direction: column; }
+    .page > div:first-child > .section + .section { margin-top: 18px; } /* more gap between sections */
+    .page > div:first-child > .section:last-of-type { justify-content: flex-end; } /* oath sits lower */
 
     /* HEADER */
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px; /* more space */
+      margin-bottom: 8px; /* more space */
     }
     .header-left { display: flex; align-items: center; gap: 10px; }
-    .logo { width: 54px; height: 54px; object-fit: contain; }
+    .logo { width: 52px; height: 52px; object-fit: contain; }
     .org-name { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
-    .logo-right { width: 54px; height: 54px; object-fit: contain; }
+    .logo-right { width: 52px; height: 52px; object-fit: contain; }
+
+    /* REMOVE ALL DECORATIVE LINES */
+    .line-thick, .line-thin, .line-section { border-top: none; margin: 0; }
 
     .free-notice {
       text-align: center;
       font-weight: bold;
       font-size: 12px;
-      margin: 10px 0 6px; /* more space */
+      margin: 10px 0 4px; /* more space */
     }
     .form-title {
       text-align: center;
@@ -52,7 +69,7 @@
     .sub-title {
       text-align: center;
       font-size: 10.5px;
-      margin: 4px 0 8px; /* more space */
+      margin: 4px 0 10px; /* more space */
     }
     .page-form-type {
       text-align: center;
@@ -68,56 +85,45 @@
       justify-content: space-between;
       align-items: flex-start;
       margin: 12px 0 14px; /* more space */
-      gap: 14px;
+      gap: 12px;
     }
     .meta-left { flex: 1; }
     .meta-left p { font-size: 11px; margin-bottom: 6px; } /* more space */
     .form-no-text { font-size: 13px; font-weight: bold; margin: 4px 0; }
 
-    /* Highlighted "Application Completed" */
-    .completed-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border: 1px solid #111;
-      border-radius: 999px;
-      font-weight: bold;
-      background: #f2f2f2;
-      margin-bottom: 8px;
-    }
-
-    /* Tick in a circle (no external icon needed) */
-    .tick-circle {
-      width: 18px;
-      height: 18px;
-      border: 2px solid #111;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 18px;
-    }
-    .tick-circle::before {
-      content: "✓";
-      font-size: 12px;
-      line-height: 1;
-      font-weight: 900;
-      transform: translateY(-0.5px);
-    }
-
     .note-text {
       font-weight: bold;
       font-size: 11.5px;
-      margin-top: 10px; /* more space */
+      margin-top: 10px;
       line-height: 1.6;
       text-align: center;
     }
 
+    /* Tick in a circle (circle-tick) */
+    .circle-tick {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #1a7a1a;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    .circle-tick::before {
+      content: "✓";
+      color: #1a7a1a;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      transform: translateY(-0.5px);
+    }
+
     /* Photo box */
     .photo-box {
-      width: 92px;
-      height: 112px;
+      width: 88px;
+      height: 108px;
       border: 1px solid #999;
       display: flex;
       align-items: center;
@@ -130,57 +136,59 @@
     }
     .photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* SECTION LABEL */
-    .section-label {
-      font-size: 11.5px;
-      font-weight: normal;
-      margin: 14px 0 10px; /* more space */
+    /* SECTION WRAPPERS (NO LINES) */
+    .section {
+      margin-top: 12px; /* creates spacing between sections */
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 8px;
     }
 
-    /* Content spacing: spread out (no borders/underlines added) */
+    /* REMOVE ALL FIELD UNDERLINES */
     .field-row,
     .row-3col,
     .row-2col {
       border-bottom: none;
-      padding: 6px 0 8px; /* was tighter */
-      line-height: 1.7;   /* more airy */
+      padding: 6px 0 6px;  /* more vertical spread */
+      line-height: 1.75;   /* more airy */
     }
 
     .field-row {
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
-      gap: 6px; /* more space */
+      gap: 6px;
     }
 
     .fi-label { font-size: 11px; font-weight: normal; white-space: nowrap; }
     .fi-value { font-size: 11.5px; font-weight: bold; }
     .fi-value.nil { font-weight: normal; font-style: italic; color: #555; }
 
-    /* 3-COLUMN ROW */
-    .row-3col { display: flex; gap: 12px; } /* space between cols */
+    /* 3-COLUMN ROW (Phone | DOB | LGA) */
+    .row-3col { display: flex; gap: 12px; }
     .col3 {
       flex: 1;
       display: flex;
       align-items: baseline;
       flex-wrap: wrap;
       gap: 6px;
-      padding-right: 0; /* using gap now */
       min-width: 0;
     }
 
-    /* 2-COLUMN ROW */
+    /* 2-COLUMN ROW (Address | Gender + Qualification) */
     .row-2col {
       display: flex;
       align-items: flex-start;
-      gap: 16px; /* more space */
+      gap: 16px;
     }
-    .col-addr { flex: 0 0 44%; overflow: hidden; min-width: 0; }
+    .col-addr { flex: 0 0 42%; overflow: hidden; min-width: 0; }
     .col-right {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px; /* more space */
+      gap: 12px;
     }
     .sub-field {
       display: flex;
@@ -189,12 +197,8 @@
       gap: 6px;
     }
 
-    /* DECLARATION */
-    .declaration {
-      font-size: 11px;
-      line-height: 1.85;
-      margin-top: 18px; /* more space */
-    }
+    /* OATH */
+    .declaration { font-size: 11px; line-height: 1.95; margin-top: 10px; }
 
     /* KEEP ONLY NAME UNDERLINE IN DECLARATION */
     .decl-name {
@@ -208,49 +212,47 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: 26px; /* more space */
+      margin-top: 18px;
       gap: 30px;
     }
-    .sign-block { width: 40%; } /* shorter line area */
-    .sign-line { border-top: 1px dotted #000; margin-bottom: 4px; margin-top: 28px; }
+    .sign-block { width: 45%; }
+    .sign-line { border-top: 1px dotted #000; margin-bottom: 3px; margin-top: 22px; }
     .sign-label { font-size: 10px; text-align: center; }
-    .thumb-block { flex: 0 0 86px; text-align: center; }
+    .thumb-block { flex: 0 0 80px; text-align: center; }
     .thumb-box {
-      width: 78px;
-      height: 78px;
+      width: 75px;
+      height: 75px;
       border: 1px solid #000;
-      margin: 0 auto 4px;
+      margin: 0 auto 3px;
     }
     .thumb-label { font-size: 10px; }
 
     /* PAGE FOOTER */
     .page-footer {
-      position: absolute;
-      bottom: 8mm;
-      left: 14mm;
-      right: 14mm;
+      margin-top: auto; /* pushes footer to bottom */
       display: flex;
       justify-content: space-between;
       font-size: 10px;
       color: #555;
+      padding-top: 10px;
     }
 
     /* GUARANTORS */
     .g-applicant-row {
       display: flex;
       align-items: baseline;
-      gap: 10px;
-      margin: 18px 0 16px; /* more space */
+      gap: 8px;
+      margin: 14px 0 16px;
     }
     .g-applicant-label { font-size: 11px; white-space: nowrap; }
 
-    /* Keep applicant name underline but shorter */
+    /* KEEP applicant name underline */
     .g-applicant-value {
       font-weight: bold;
       font-size: 11.5px;
       border-bottom: 1px solid #000;
-      width: 38%;   /* was 45% */
-      min-height: 16px;
+      width: 45%;
+      min-height: 15px;
       padding-bottom: 1px;
     }
 
@@ -259,38 +261,38 @@
       font-weight: bold;
       font-size: 12px;
       text-decoration: none;
-      margin: 12px 0 12px; /* more space */
+      margin: 14px 0 10px;
       text-transform: uppercase;
     }
-    .g-body { font-size: 11px; line-height: 1.95; margin-bottom: 10px; } /* more airy */
+    .g-body { font-size: 11px; line-height: 2.0; margin-bottom: 12px; }
 
-    /* Keep only the I, ______ blanks */
+    /* KEEP only the I, ______ blanks */
     .g-blank {
       border-bottom: 1px solid #000;
       display: inline-block;
-      min-width: 210px; /* a bit longer like printed forms */
+      min-width: 200px;
       vertical-align: bottom;
     }
 
-    /* Divider between Village Head and Honourable (keep as in your file) */
+    /* KEEP divider between Village Head and Honourable */
     .divider {
       border-top: 1px solid #000;
       margin: 22px 0;
     }
 
     /* MEDICAL */
-    .med-intro { font-size: 11px; line-height: 1.8; margin: 14px 0 18px; }
+    .med-intro { font-size: 11px; line-height: 1.9; margin: 12px 0 18px; }
     .med-item {
       display: flex;
       align-items: baseline;
       gap: 10px;
-      margin-bottom: 18px; /* more space to fill A4 */
+      margin-bottom: 18px; /* spread down */
       font-size: 11px;
     }
     .med-alpha { min-width: 16px; }
-    .med-name  { min-width: 140px; }
+    .med-name  { min-width: 125px; }
 
-    /* REMOVE medical blanks (as you required) */
+    /* REMOVE medical blanks */
     .med-blank { border-bottom: none; flex: 1; min-height: 14px; }
 
     .doc-section { font-size: 11px; line-height: 2.0; margin-top: 18px; }
@@ -313,142 +315,154 @@
 <!-- PAGE 1 -->
 <div class="page">
 
-  <div class="header">
-    <div class="header-left">
-      <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
-      <span class="org-name">OYO STATE</span>
+  <div>
+    <div class="header">
+      <div class="header-left">
+        <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
+        <span class="org-name">OYO STATE</span>
+      </div>
+      <img class="logo-right" src="{{AMOTEKUN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
     </div>
-    <img class="logo-right" src="{{AMOTEKUN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
-  </div>
 
-  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
-  <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
+    <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+    <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
 
-  <div class="meta-photo">
-    <div class="meta-left">
-      <div class="completed-pill">
-        <span>Application Completed</span>
-        <span class="tick-circle" aria-hidden="true"></span>
+    <div class="meta-photo">
+      <div class="meta-left">
+        <p>Application Completed <span class="circle-tick" aria-hidden="true"></span></p>
+        <p class="form-no-text">Form No.: {{FORM_NO}}</p>
+        <p style="font-size:10.5px; margin-top:1px;">Date Submitted: {{SUBMITTED_DATE}}</p>
+        <p class="note-text">
+          NOTE: PLEASE PRINT THE SLIP AND BRING FORWARD<br/>
+          DURING THE SCREENING EXERCISES!
+        </p>
       </div>
 
-      <p class="form-no-text">Form No.: {{FORM_NO}}</p>
-      <p style="font-size:10px; margin-top:2px;">Date Submitted: {{SUBMITTED_DATE}}</p>
-
-      <p class="note-text">
-        NOTE: PLEASE PRINT THE SLIP AND BRING FORWARD<br/>
-        DURING THE SCREENING EXERCISES!
-      </p>
-    </div>
-
-    <div class="photo-box">
-      {{#if PASSPORT_PHOTO}}
-        <img src="{{PASSPORT_PHOTO}}" alt="Passport Photo"/>
-      {{else}}
-        Passport<br/>Photograph
-      {{/if}}
-    </div>
-  </div>
-
-  <div class="section-label">Personal Information:</div>
-
-  <div class="field-row">
-    <span class="fi-label">Name of Applicant:</span>
-    <span class="fi-value">{{FULL_NAME}}</span>
-  </div>
-
-  <div class="row-3col">
-    <div class="col3">
-      <span class="fi-label">Phone Number:</span>
-      <span class="fi-value">{{PHONE_NUMBER}}</span>
-    </div>
-    <div class="col3">
-      <span class="fi-label">Date of Birth:</span>
-      <span class="fi-value">{{DATE_OF_BIRTH}}</span>
-    </div>
-    <div class="col3">
-      <span class="fi-label">LGA:</span>
-      <span class="fi-value">{{LGA}}</span>
-    </div>
-  </div>
-
-  <div class="row-2col">
-    <div class="col-addr">
-      <span class="fi-label">Permanent Home Address:</span>
-      <div class="fi-value" style="line-height:1.75; margin-top:4px; word-break:break-word; overflow-wrap:anywhere;">
-        {{HOME_ADDRESS}}
+      <div class="photo-box">
+        {{#if PASSPORT_PHOTO}}
+          <img src="{{PASSPORT_PHOTO}}" alt="Passport Photo"/>
+        {{else}}
+          Passport<br/>Photograph
+        {{/if}}
       </div>
     </div>
-    <div class="col-right">
-      <div class="sub-field">
-        <span class="fi-label">Gender:</span>
-        <span class="fi-value">{{GENDER}}</span>
+
+    <!-- PERSONAL INFORMATION SECTION -->
+    <div class="section">
+      <!-- <div class="section-title">Personal Information</div> -->
+
+      <div class="field-row">
+        <span class="fi-label">Name of Applicant:</span>
+        <span class="fi-value">{{FULL_NAME}}</span>
       </div>
-      <div class="sub-field">
-        <span class="fi-label">Academic Qualification:</span>
-        {{#if QUALIFICATION}}
-          <span class="fi-value">{{QUALIFICATION}}</span>
+
+      <div class="row-3col">
+        <div class="col3">
+          <span class="fi-label">Phone Number:</span>
+          <span class="fi-value">{{PHONE_NUMBER}}</span>
+        </div>
+        <div class="col3">
+          <span class="fi-label">Date of Birth:</span>
+          <span class="fi-value">{{DATE_OF_BIRTH}}</span>
+        </div>
+        <div class="col3">
+          <span class="fi-label">LGA:</span>
+          <span class="fi-value">{{LGA}}</span>
+        </div>
+      </div>
+
+      <div class="row-2col">
+        <div class="col-addr">
+          <span class="fi-label">Permanent Home Address:</span>
+          <div class="fi-value" style="line-height:1.8; margin-top:4px; word-break:break-word; overflow-wrap:anywhere;">
+            {{HOME_ADDRESS}}
+          </div>
+        </div>
+
+        <div class="col-right">
+          <div class="sub-field">
+            <span class="fi-label">Gender:</span>
+            <span class="fi-value">{{GENDER}}</span>
+          </div>
+
+          <div class="sub-field">
+            <span class="fi-label">Academic Qualification:</span>
+            {{#if QUALIFICATION}}
+              <span class="fi-value">{{QUALIFICATION}}</span>
+            {{else}}
+              <span class="fi-value nil">NIL</span>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERIENCE SECTION -->
+    <div class="section">
+      <!-- <div class="section-title">Experience</div> -->
+
+      <div class="field-row">
+        <span class="fi-label">Do you have any security related experiences?</span>
+        <span class="fi-value">{{HAS_SECURITY_EXP}}</span>
+      </div>
+
+      <div class="field-row">
+        <span class="fi-label">Mention the name of the organization you belong to:</span>
+        {{#if ORGANIZATION_NAME}}
+          <span class="fi-value">{{ORGANIZATION_NAME}}</span>
+        {{else}}
+          <span class="fi-value nil">NIL</span>
+        {{/if}}
+      </div>
+
+      <div class="field-row">
+        <span class="fi-label">How long have you been a member?</span>
+        {{#if MEMBERSHIP_DURATION}}
+          <span class="fi-value">{{MEMBERSHIP_DURATION}}</span>
+        {{else}}
+          <span class="fi-value nil">NIL</span>
+        {{/if}}
+      </div>
+
+      <div class="field-row">
+        <span class="fi-label">Do you have any special skill or trade?</span>
+        {{#if SPECIAL_SKILL}}
+          <span class="fi-value">{{SPECIAL_SKILL}}</span>
+        {{else}}
+          <span class="fi-value nil">NIL</span>
+        {{/if}}
+      </div>
+
+      <div class="field-row">
+        <span class="fi-label">Any other relevant information that could help your selection?</span>
+        {{#if OTHER_INFO}}
+          <span class="fi-value">{{OTHER_INFO}}</span>
         {{else}}
           <span class="fi-value nil">NIL</span>
         {{/if}}
       </div>
     </div>
-  </div>
 
-  <div class="field-row">
-    <span class="fi-label">Do you have any security related experiences?</span>
-    <span class="fi-value">{{HAS_SECURITY_EXP}}</span>
-  </div>
+    <!-- OATH SECTION -->
+    <div class="section">
+      <!-- <div class="section-title">Oath</div> -->
 
-  <div class="field-row">
-    <span class="fi-label">Mention the name of the organization you belong to:</span>
-    {{#if ORGANIZATION_NAME}}
-      <span class="fi-value">{{ORGANIZATION_NAME}}</span>
-    {{else}}
-      <span class="fi-value nil">NIL</span>
-    {{/if}}
-  </div>
+      <div class="declaration">
+        I, <span class="decl-name">{{FULL_NAME}}</span> solemnly swear that the information
+        provided above is true and nothing but the truth. Consequently, I should be held liable
+        in the event that any of the above information is discovered to be false.
+      </div>
 
-  <div class="field-row">
-    <span class="fi-label">How long have you been a member?</span>
-    {{#if MEMBERSHIP_DURATION}}
-      <span class="fi-value">{{MEMBERSHIP_DURATION}}</span>
-    {{else}}
-      <span class="fi-value nil">NIL</span>
-    {{/if}}
-  </div>
-
-  <div class="field-row">
-    <span class="fi-label">Do you have any special skill or trade?</span>
-    {{#if SPECIAL_SKILL}}
-      <span class="fi-value">{{SPECIAL_SKILL}}</span>
-    {{else}}
-      <span class="fi-value nil">NIL</span>
-    {{/if}}
-  </div>
-
-  <div class="field-row">
-    <span class="fi-label">Any other relevant information that could help your selection?</span>
-    {{#if OTHER_INFO}}
-      <span class="fi-value">{{OTHER_INFO}}</span>
-    {{else}}
-      <span class="fi-value nil">NIL</span>
-    {{/if}}
-  </div>
-
-  <div class="declaration">
-    I, <span class="decl-name">{{FULL_NAME}}</span> solemnly swear that the information
-    provided above is true and nothing but the truth. Consequently, I should be held liable
-    in the event that any of the above information is discovered to be false.
-  </div>
-
-  <div class="sign-row">
-    <div class="sign-block">
-      <div class="sign-line"></div>
-      <div class="sign-label">Applicant's Signature &amp; Date</div>
-    </div>
-    <div class="thumb-block">
-      <div class="thumb-box"></div>
-      <div class="thumb-label">Right Thumbprint</div>
+      <div class="sign-row">
+        <div class="sign-block">
+          <div class="sign-line"></div>
+          <div class="sign-label">Applicant's Signature &amp; Date</div>
+        </div>
+        <div class="thumb-block">
+          <div class="thumb-box"></div>
+          <div class="thumb-label">Right Thumbprint</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -462,73 +476,75 @@
 <!-- PAGE 2 -->
 <div class="page">
 
-  <div class="header">
-    <div class="header-left">
-      <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
-      <span class="org-name">OYO STATE</span>
+  <div>
+    <div class="header">
+      <div class="header-left">
+        <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
+        <span class="org-name">OYO STATE</span>
+      </div>
+      <img class="logo-right" src="{{ÀMỌ̀TẸ́KÙN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
     </div>
-    <img class="logo-right" src="{{ÀMỌ̀TẸ́KÙN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
-  </div>
 
-  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
-  <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
-  <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
-  <div class="page-form-type">GUARANTORS' FORM</div>
+    <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+    <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
+    <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
+    <div class="page-form-type">GUARANTORS' FORM</div>
 
-  <div class="g-applicant-row">
-    <span class="g-applicant-label">Applicant's Name:</span>
-    <span class="g-applicant-value">{{FULL_NAME}}</span>
-  </div>
-
-  <div class="g-section-title">VILLAGE HEAD</div>
-  <div class="g-body">
-    I,&nbsp;<span class="g-blank"></span>
-    &nbsp;the village head of the above-named applicant who wishes to be selected as a member
-    of ÀMỌ̀TẸ́KÙN Corps. I know him/her personally and I found him/her suitable to be selected
-    for the corps. I can attest to his/her good conduct and character. Therefore, I am
-    recommending the applicant for selection and I should be held liable if the applicant is
-    found wanting in character or other vices.
-  </div>
-
-  <div class="sign-row">
-    <div class="sign-block">
-      <div class="sign-line"></div>
-      <div class="sign-label">Signature &amp; Date</div>
+    <div class="g-applicant-row">
+      <span class="g-applicant-label">Applicant's Name:</span>
+      <span class="g-applicant-value">{{FULL_NAME}}</span>
     </div>
-    <div class="thumb-block">
-      <div class="thumb-box"></div>
-      <div class="thumb-label">Right Thumbprint</div>
+
+    <div class="g-section-title">VILLAGE HEAD</div>
+    <div class="g-body">
+      I,&nbsp;<span class="g-blank"></span>
+      &nbsp;the village head of the above-named applicant who wishes to be selected as a member
+      of ÀMỌ̀TẸ́KÙN Corps. I know him/her personally and I found him/her suitable to be selected
+      for the corps. I can attest to his/her good conduct and character. Therefore, I am
+      recommending the applicant for selection and I should be held liable if the applicant is
+      found wanting in character or other vices.
     </div>
-  </div>
 
-  <div class="divider"></div>
-
-  <div class="g-applicant-row">
-    <span class="g-applicant-label">Applicant's Name:</span>
-    <span class="g-applicant-value">&nbsp;</span>
-  </div>
-
-  <div class="g-section-title">HONORABLE MEMBER, OYO STATE HOUSE OF ASSEMBLY</div>
-  <div class="g-body">
-    I, Honourable&nbsp;
-    <span class="g-blank"></span>
-    &nbsp;of&nbsp;
-    <span class="g-blank"></span>
-    &nbsp;constituency of the above-named applicant who wishes to be selected as a member of
-    ÀMỌ̀TẸ́KÙN Corps. I know him/her personally and I found him/her suitable to be selected
-    for the corps. I can attest to his/her good conduct and character. Therefore, I am
-    recommending the applicant for selection and I should be held liable if the applicant
-    is found wanting in character or other vices.
-  </div>
-
-  <div class="sign-row">
-    <div class="sign-block">
-      <div class="sign-line"></div>
-      <div class="sign-label">Signature &amp; Date</div>
+    <div class="sign-row">
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        <div class="sign-label">Signature &amp; Date</div>
+      </div>
+      <div class="thumb-block">
+        <div class="thumb-box"></div>
+        <div class="thumb-label">Right Thumbprint</div>
+      </div>
     </div>
-    <div class="thumb-block">
-      <div class="thumb-box"></div>
-      <div class="thumb-label">Right Thumbprint</div>
+
+    <div class="divider"></div>
+
+    <div class="g-applicant-row">
+      <span class="g-applicant-label">Applicant's Name:</span>
+      <span class="g-applicant-value">&nbsp;</span>
+    </div>
+
+    <div class="g-section-title">HONORABLE MEMBER, OYO STATE HOUSE OF ASSEMBLY</div>
+    <div class="g-body">
+      I, Honourable&nbsp;
+      <span class="g-blank"></span>
+      &nbsp;of&nbsp;
+      <span class="g-blank"></span>
+      &nbsp;constituency of the above-named applicant who wishes to be selected as a member of
+      ÀMỌ̀TẸ́KÙN Corps. I know him/her personally and I found him/her suitable to be selected
+      for the corps. I can attest to his/her good conduct and character. Therefore, I am
+      recommending the applicant for selection and I should be held liable if the applicant
+      is found wanting in character or other vices.
+    </div>
+
+    <div class="sign-row">
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        <div class="sign-label">Signature &amp; Date</div>
+      </div>
+      <div class="thumb-block">
+        <div class="thumb-box"></div>
+        <div class="thumb-label">Right Thumbprint</div>
+      </div>
     </div>
   </div>
 
@@ -542,70 +558,72 @@
 <!-- PAGE 3 -->
 <div class="page">
 
-  <div class="header">
-    <div class="header-left">
-      <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
-      <span class="org-name">OYO STATE</span>
+  <div>
+    <div class="header">
+      <div class="header-left">
+        <img class="logo" src="{{OYO_STATE_LOGO}}" alt="Oyo State"/>
+        <span class="org-name">OYO STATE</span>
+      </div>
+      <img class="logo-right" src="{{ÀMỌ̀TẸ́KÙN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
     </div>
-    <img class="logo-right" src="{{ÀMỌ̀TẸ́KÙN_LOGO}}" alt="ÀMỌ̀TẸ́KÙN"/>
-  </div>
 
-  <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
-  <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
-  <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
-  <div class="page-form-type">MEDICAL FORM</div>
+    <div class="free-notice">THIS FORM IS FREE AND NOT FOR SALE!</div>
+    <div class="form-title">ÀMỌ̀TẸ́KÙN RECRUITMENT FORM</div>
+    <div class="sub-title">PLEASE PRINT THE SLIP AND BRING FORWARD DURING THE SCREENING EXERCISE</div>
+    <div class="page-form-type">MEDICAL FORM</div>
 
-  <div class="g-applicant-row" style="margin-top:16px;">
-    <span class="g-applicant-label">Applicant's Name:</span>
-    <span class="g-applicant-value">{{FULL_NAME}}</span>
-  </div>
-
-  <div class="med-intro">
-    The following tests were conducted on the above named applicant by me the under signed
-    laboratory scientists:
-  </div>
-
-  <div class="med-item">
-    <span class="med-alpha">A.</span>
-    <span class="med-name">Hepatitis</span>
-    <span class="med-blank"></span>
-  </div>
-  <div class="med-item">
-    <span class="med-alpha">B.</span>
-    <span class="med-name">Random Blood Sugar</span>
-    <span class="med-blank"></span>
-  </div>
-  <div class="med-item">
-    <span class="med-alpha">C.</span>
-    <span class="med-name">PCV</span>
-    <span class="med-blank"></span>
-  </div>
-  <div class="med-item">
-    <span class="med-alpha">D.</span>
-    <span class="med-name">Vital Signs</span>
-    <span class="med-blank"></span>
-  </div>
-
-  <div class="sign-row" style="margin-top:22px;">
-    <div class="sign-block">
-      <div class="sign-line"></div>
-      <div class="sign-label">Signature / Date / Stamp</div>
+    <div class="g-applicant-row" style="margin-top:14px;">
+      <span class="g-applicant-label">Applicant's Name:</span>
+      <span class="g-applicant-value">{{FULL_NAME}}</span>
     </div>
-  </div>
 
-  <div class="divider"></div>
+    <div class="med-intro">
+      The following tests were conducted on the above named applicant by me the under signed
+      laboratory scientists:
+    </div>
 
-  <div class="doc-section">
-    I, Dr.&nbsp;<span class="doc-blank"></span>&nbsp; of &nbsp;
-    <span class="doc-blank"></span>
-    &nbsp;state hospital have examined the above named applicant and found him/her medically
-    fit to be recruited into ÀMỌ̀TẸ́KÙN Corps.
-  </div>
+    <div class="med-item">
+      <span class="med-alpha">A.</span>
+      <span class="med-name">Hepatitis</span>
+      <span class="med-blank"></span>
+    </div>
+    <div class="med-item">
+      <span class="med-alpha">B.</span>
+      <span class="med-name">Random Blood Sugar</span>
+      <span class="med-blank"></span>
+    </div>
+    <div class="med-item">
+      <span class="med-alpha">C.</span>
+      <span class="med-name">PCV</span>
+      <span class="med-blank"></span>
+    </div>
+    <div class="med-item">
+      <span class="med-alpha">D.</span>
+      <span class="med-name">Vital Signs</span>
+      <span class="med-blank"></span>
+    </div>
 
-  <div class="sign-row" style="margin-top:22px;">
-    <div class="sign-block">
-      <div class="sign-line"></div>
-      <div class="sign-label">Signature / Date / Stamp</div>
+    <div class="sign-row" style="margin-top:18px;">
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        <div class="sign-label">Signature / Date / Stamp</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="doc-section">
+      I, Dr.&nbsp;<span class="doc-blank"></span>&nbsp; of &nbsp;
+      <span class="doc-blank"></span>
+      &nbsp;state hospital have examined the above named applicant and found him/her medically
+      fit to be recruited into ÀMỌ̀TẸ́KÙN Corps.
+    </div>
+
+    <div class="sign-row" style="margin-top:18px;">
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        <div class="sign-label">Signature / Date / Stamp</div>
+      </div>
     </div>
   </div>
 
